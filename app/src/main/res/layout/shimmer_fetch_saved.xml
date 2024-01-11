@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="121dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="15dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/imagePekerjaan"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/todo_22"
+                android:scaleType="centerCrop"
+                android:src="@color/shimmer_color" />
+
+            <LinearLayout
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/namaPekerjaan"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/shimmer_color"
+                    android:fontFamily="sans-serif"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageWaktuKerja"
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:src="@color/shimmer_color"
+                        android:contentDescription="@string/todo_18" />
+
+                    <TextView
+                        android:id="@+id/waktuKerja"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="sans-serif"
+                        android:background="@color/shimmer_color"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageLokasi"
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:src="@color/shimmer_color"
+                        android:contentDescription="@string/todo_17" />
+
+                    <TextView
+                        android:id="@+id/lokasiPekerjaan"
+                        android:layout_width="190dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="sans-serif"
+                        android:background="@color/shimmer_color" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageGaji"
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:src="@color/shimmer_color"
+                        android:contentDescription="@string/todo_21" />
+
+                    <TextView
+                        android:id="@+id/gajiPekerjaan"
+                        android:layout_width="190dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:background="@color/shimmer_color"
+                        android:fontFamily="sans-serif"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:layout_gravity="right">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@color/shimmer_color"
+                    tools:ignore="ImageContrastCheck"
+                    android:contentDescription="@string/todo_25" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

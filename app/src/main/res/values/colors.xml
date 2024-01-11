@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="shimmer_color">#BFBDBD</color>
+    <color name="colorAccepted">#4CAF50</color><!-- Warna hijau -->
+    <color name="colorRejected">#FA381B</color>
+    <color name="defaultTextColor">#FFC107</color> <!-- Warna teks default -->
+</resources>

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,6 +25,7 @@ class HomeFragment : Fragment() {
     private lateinit var edSearch: EditText
     private lateinit var btnSearch: Button
     private lateinit var originalHomeList: ArrayList<DataListHome?>
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +39,12 @@ class HomeFragment : Fragment() {
         shimmerFrameLayout = view.findViewById<ShimmerFrameLayout>(R.id.shimmerLayoutMemberHome)
         edSearch = view.findViewById(R.id.edSearch)
         btnSearch = view.findViewById(R.id.btnSearch)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+
+        // Atur listener untuk refresh
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
+        }
 
         // Ambil data dari Firestore
         db.collection("job_vacancies")
@@ -76,6 +84,48 @@ class HomeFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun refreshData() {
+        // Lakukan penarikan data baru dari Firestore saat di-refresh
+        fetchDataFromFirestore()
+        // Berhenti animasi refresh
+        swipeRefreshLayout.isRefreshing = false
+    }
+
+    private fun fetchDataFromFirestore() {
+        db.collection("job_vacancies")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                homeList.clear()
+                originalHomeList.clear()
+
+                if (querySnapshot != null) {
+                    for (document in querySnapshot.documents) {
+                        val image = document.getString("job_image") ?: ""
+                        val jobName = document.getString("job_name") ?: ""
+                        val location = document.getString("location") ?: ""
+                        var salary = document.getString("salary") ?: ""
+                        var working_time = document.getString("working_time") ?: ""
+                        val documentId = document.id
+
+                        homeList.add(DataListHome(documentId, image, jobName, location, working_time, salary, null))
+                    }
+
+                    originalHomeList.addAll(homeList)
+
+                    // Jika fragment sudah di-attach dan activity tidak null, update data
+                    if (isAdded && activity != null) {
+                        populateData()
+                    }
+
+                    shimmerFrameLayout.stopShimmer()
+                    shimmerFrameLayout.visibility = View.GONE
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("HomeFragment", "Error getting job vacancies", exception)
+            }
     }
 
     private fun searchJobs(keyword: String) {

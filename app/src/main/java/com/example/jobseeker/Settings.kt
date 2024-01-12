@@ -15,6 +15,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class Settings : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -61,22 +62,34 @@ class Settings : AppCompatActivity() {
             val userId = user?.uid
 
             val firestore = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
             val userDocRef = userId?.let { it1 -> firestore.collection("users").document(it1) }
+
+            // Hapus data dari Firestore
             userDocRef?.delete()?.addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    user?.delete()?.addOnCompleteListener {
-                        if (it.isSuccessful){
-                            Toast.makeText(this, "Akun berhasil dihapus", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this, Login::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(intent)
-                            finish()
-                        }else{
-                            Toast.makeText(this, "Akun gagal dihapus", Toast.LENGTH_SHORT).show()
+                if (task.isSuccessful) {
+                    // Hapus data dari Firebase Storage (foto profil)
+                    val storageRef = storage.reference.child("profile_images").child("$userId.jpg")
+                    storageRef.delete().addOnCompleteListener { storageTask ->
+                        if (storageTask.isSuccessful) {
+                            // Hapus akun pengguna
+                            user?.delete()?.addOnCompleteListener { deleteTask ->
+                                if (deleteTask.isSuccessful) {
+                                    Toast.makeText(this, "Akun Anda berhasil dihapus. Sampai jumpa!", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, Login::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Gagal menghapus akun. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        } else {
+                            Toast.makeText(this, "Gagal menghapus foto profil. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
                         }
                     }
-                }else{
-                    Toast.makeText(this, "Gagal menghapus data pengguna", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Gagal menghapus akun. Silakan coba lagi.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

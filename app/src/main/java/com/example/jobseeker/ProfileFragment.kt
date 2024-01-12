@@ -162,24 +162,48 @@ class ProfileFragment : Fragment() {
         if (currentUser != null) {
             val uid = currentUser.uid
 
+            // Hapus foto profil lama dari Firebase Storage
+            deleteOldProfileImage(uid)
+
+            // Upload gambar ke Firebase Storage
             val profileImageRef = storageReference.child("profile_images/$uid.jpg")
 
             profileImageRef.putFile(imageUri)
                 .addOnSuccessListener { taskSnapshot ->
                     profileImageRef.downloadUrl.addOnSuccessListener { uri ->
                         val imageUrl = uri.toString()
+
+                        // Simpan URL gambar baru di Firestore
                         firestore.collection("users")
                             .document(uid)
                             .update("profile_image", imageUrl)
                             .addOnSuccessListener {
+                                // Berhasil mengunggah dan menyimpan URL baru
                             }
                             .addOnFailureListener {
+                                // Gagal menyimpan URL baru
                             }
                     }
                 }
                 .addOnFailureListener { exception ->
+                    // Gagal mengunggah gambar baru
                 }
         }
+    }
+
+    // Metode untuk menghapus foto profil lama dari Firebase Storage
+    private fun deleteOldProfileImage(uid: String) {
+        val oldProfileImageRef = storageReference.child("profile_images/$uid.jpg")
+
+        oldProfileImageRef.delete()
+            .addOnSuccessListener {
+                // Foto profil lama berhasil dihapus
+                Log.d("StorageDelete", "Foto profil lama berhasil dihapus")
+            }
+            .addOnFailureListener { exception ->
+                // Gagal menghapus foto profil lama
+                Log.e("StorageDelete", "Gagal menghapus foto profil lama: ${exception.message}")
+            }
     }
 
     private fun getVersionName(): String {

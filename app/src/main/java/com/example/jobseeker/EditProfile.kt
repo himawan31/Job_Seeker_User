@@ -42,7 +42,8 @@ class EditProfile : AppCompatActivity() {
                     if (document.exists()) {
                         val fullname = document.getString("fullname")
                         val email = if (isGoogleSignIn()) {
-                            currentUser.email // Gunakan email dari Google
+                            // Gunakan email dari Google
+                            currentUser.email
                         } else {
                             document.getString("email") // Gunakan email dari Firestore
                         }
@@ -60,7 +61,6 @@ class EditProfile : AppCompatActivity() {
                         binding.formAddress.setText(address)
                         binding.formJob.setText(job)
                     }
-
                 }
         }
 

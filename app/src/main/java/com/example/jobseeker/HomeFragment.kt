@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -148,6 +149,10 @@ class HomeFragment : Fragment() {
 
         val adp = AdapterListHome(requireActivity(), homeList)
         recyclerView.adapter = adp
+
+        // Tampilkan atau sembunyikan LinearLayout dataNotFound
+        val dataNotFoundLayout = view?.findViewById<LinearLayout>(R.id.dataNotFound)
+        dataNotFoundLayout?.visibility = if (homeList.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun populateData() {

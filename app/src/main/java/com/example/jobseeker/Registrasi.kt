@@ -57,6 +57,7 @@ class Registrasi : AppCompatActivity() {
                             val uid = user.uid
                             val userMap = HashMap<String, Any>()
                             userMap["fullname"] = fullname
+                            userMap["email"] = email // Menyimpan alamat email ke Firestore
 
                             firestore.collection("users")
                                 .document(uid)
@@ -67,6 +68,9 @@ class Registrasi : AppCompatActivity() {
                                     dimView.visibility = View.INVISIBLE
                                     startActivity(Intent(this, GoToHomepage::class.java))
                                     finish()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Gagal menyimpan email ke Firestore", Toast.LENGTH_SHORT).show()
                                 }
                         }
                     } else {

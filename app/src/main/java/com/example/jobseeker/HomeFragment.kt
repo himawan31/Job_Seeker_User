@@ -1,5 +1,6 @@
 package com.example.jobseeker
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -156,10 +158,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun populateData() {
-        val linearLayout = LinearLayoutManager(activity)
-        linearLayout.stackFromEnd = true
-        linearLayout.reverseLayout = true
-        recyclerView.layoutManager = linearLayout
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Jika dalam mode landscape, set GridLayoutManager dengan 2 kolom
+            val gridLayoutManager = GridLayoutManager(activity, 2)
+            recyclerView.layoutManager = gridLayoutManager
+        } else {
+            // Jika dalam mode potrait, biarkan LayoutManager sesuai dengan default vertical
+            val linearLayoutManager = LinearLayoutManager(activity)
+            linearLayoutManager.stackFromEnd = true
+            linearLayoutManager.reverseLayout = true
+            recyclerView.layoutManager = linearLayoutManager
+        }
 
         // Gunakan originalHomeList untuk inisialisasi adapter
         val adp = AdapterListHome(requireActivity(), originalHomeList)

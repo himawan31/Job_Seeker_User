@@ -1,6 +1,7 @@
 package com.example.jobseeker
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -83,20 +85,22 @@ class SavedFragment : Fragment() {
     }
 
     private fun populateData() {
-        if (isAdded) { // Periksa apakah fragment masih terpasang
-            val linearLayout = LinearLayoutManager(activity)
-            linearLayout.stackFromEnd = true
-            linearLayout.reverseLayout = true
-            recyclerView.layoutManager = linearLayout
+        if (isAdded) {
+            val orientation = resources.configuration.orientation
+            val layoutManager: RecyclerView.LayoutManager = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // Jika dalam mode landscape, set GridLayoutManager dengan 2 kolom
+                GridLayoutManager(activity, 2, RecyclerView.VERTICAL, true)
+            } else {
+                // Jika dalam mode potrait, biarkan LayoutManager sesuai dengan default vertical
+                LinearLayoutManager(activity)
+            }
 
-            // Buat adapter dan set onItemClickListener
+            recyclerView.layoutManager = layoutManager
+
             val adapter = AdapterListSaved(requireActivity(), savedList)
             adapter.setOnItemClickListener(object : AdapterListSaved.OnItemClickListener {
                 override fun onItemClick(position: Int, documentId: String) {
-                    // Ambil data dari item yang diklik
                     val clickedItem = savedList[position]
-
-                    // Implementasikan logika untuk membuka DetailJobActivity
                     moveToDetailJobActivity(
                         documentId,
                         clickedItem.nama_pekerjaan,

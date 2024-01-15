@@ -1,5 +1,6 @@
 package com.example.jobseeker
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -27,7 +28,9 @@ class SearchFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewSearch)
         adapter = AdapterListSearch(requireContext(), ArrayList())
 
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        // Set LayoutManager dengan jumlah kolom berdasarkan orientasi layar
+        val columns = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), columns)
         recyclerView.adapter = adapter
 
         fetchDataFromFirestore()

@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SavedFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var savedList : ArrayList<DataListSaved>
+    private lateinit var adapter: AdapterListSaved
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -33,6 +34,7 @@ class SavedFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewSaved)
         savedList = ArrayList()
+        adapter = AdapterListSaved(requireActivity(), savedList)
         shimmerFrameLayout = view.findViewById(R.id.shimmerLayoutSaved)
         val layoutNoData: LinearLayout = view.findViewById(R.id.dataNotFound)
 
@@ -97,7 +99,6 @@ class SavedFragment : Fragment() {
 
             recyclerView.layoutManager = layoutManager
 
-            val adapter = AdapterListSaved(requireActivity(), savedList)
             adapter.setOnItemClickListener(object : AdapterListSaved.OnItemClickListener {
                 override fun onItemClick(position: Int, documentId: String) {
                     val clickedItem = savedList[position]

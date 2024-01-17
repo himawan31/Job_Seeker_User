@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: AdapterListHome
     private lateinit var homeList : ArrayList<DataListHome?>
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private val db = FirebaseFirestore.getInstance()
@@ -44,42 +45,20 @@ class HomeFragment : Fragment() {
         btnSearch = view.findViewById(R.id.btnSearch)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
+        // Set LayoutManager ke RecyclerView
+        val layoutManager = LinearLayoutManager(activity)
+        recyclerView.layoutManager = layoutManager
+
+        // Set Adapter ke RecyclerView
+        adapter = AdapterListHome(requireActivity(), originalHomeList)
+        recyclerView.adapter = adapter
+
         // Atur listener untuk refresh
         swipeRefreshLayout.setOnRefreshListener {
             refreshData()
         }
 
-        // Ambil data dari Firestore
-        db.collection("job_vacancies")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot != null) {
-                    for (document in querySnapshot.documents) {
-                        val image = document.getString("job_image") ?: ""
-                        val jobName = document.getString("job_name") ?: ""
-                        val location = document.getString("location") ?: ""
-                        var salary = document.getString("salary") ?: ""
-                        var working_time = document.getString("working_time") ?: ""
-                        val documentId = document.id
-
-                        homeList.add(DataListHome(documentId, image, jobName, location, working_time, salary, null))
-                    }
-
-                    // Simpan data asli untuk pencarian ulang
-                    originalHomeList.addAll(homeList)
-
-                    if (isAdded && activity != null) {
-                        populateData()
-                    }
-
-                    shimmerFrameLayout.stopShimmer()
-                    shimmerFrameLayout.visibility = View.GONE
-                }
-            }
-            .addOnFailureListener { exception ->
-                // Handle kesalahan jika terjadi
-                Log.e("HomeFragment", "Error getting job vacancies", exception)
-            }
+        fetchDataFromFirestore()
 
         btnSearch.setOnClickListener {
             // Panggil metode untuk melakukan pencarian

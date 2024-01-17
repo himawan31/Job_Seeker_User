@@ -2,11 +2,14 @@ package com.example.jobseeker
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +20,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: AdapterListSearch
+    private lateinit var searchBar: EditText
+    private lateinit var originalSearchList: ArrayList<DataListSearch?>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,47 +38,57 @@ class SearchFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(requireContext(), columns)
         recyclerView.adapter = adapter
 
+        searchBar = view.findViewById(R.id.searchBar)
+
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No action needed before text changes
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // No action needed when text is changing
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // When text changes, filter categories based on the entered text
+                filterCategories(s.toString())
+            }
+        })
+
         fetchDataFromFirestore()
 
         return view
     }
 
+    private fun filterCategories(query: String) {
+        if (::originalSearchList.isInitialized) {
+            val filteredList = ArrayList<DataListSearch?>()
+            for (data in originalSearchList) {
+                if (data?.category_name?.toLowerCase()?.contains(query.toLowerCase()) == true) {
+                    filteredList.add(data)
+                }
+            }
+            adapter.updateData(filteredList)
+        } else {
+            Log.e("SearchFragment", "originalSearchList has not been initialized yet.")
+        }
+    }
+
     private fun fetchDataFromFirestore() {
-        // Initialize Firestore
         val firestore = FirebaseFirestore.getInstance()
         val categoriesRef = firestore.collection("categories")
 
-        // Fetch data from Firestore
         categoriesRef.get()
             .addOnSuccessListener { categoryDocuments ->
-                val searchList = ArrayList<DataListSearch?>()
+                originalSearchList = ArrayList()
 
                 for (categoryDocument in categoryDocuments) {
                     val categoryName = categoryDocument.getString("category_name")
-
-                    // Membuat objek DataListSearch dengan kategori
                     val dataListSearch = DataListSearch(category_name = categoryName ?: "", job_count = 0)
-
-                    // Mendapatkan jumlah pekerjaan dari koleksi pekerjaan yang memiliki kategori tertentu
-                    val jobsRef = firestore.collection("job_vacancies").whereEqualTo("category", categoryName)
-
-                    jobsRef.get()
-                        .addOnSuccessListener { jobDocuments ->
-                            // Menambahkan jumlah pekerjaan ke dalam objek DataListSearch
-                            val jobCount = jobDocuments.size()
-                            Log.d("Firestore", "Category: $categoryName, Job Count: $jobCount")
-
-                            // Menambahkan objek ke dalam list
-                            dataListSearch.job_count = jobCount
-                            searchList.add(dataListSearch)
-
-                            // Memperbarui adapter dengan data baru
-                            adapter.updateData(searchList)
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e("Firestore", "Error getting job documents: ", exception)
-                        }
+                    originalSearchList.add(dataListSearch)
                 }
+
+                adapter.updateData(originalSearchList)
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting category documents: ", exception)

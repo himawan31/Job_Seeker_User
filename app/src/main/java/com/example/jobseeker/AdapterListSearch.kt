@@ -1,6 +1,7 @@
 package com.example.jobseeker
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,10 @@ class AdapterListSearch (val context: Context, var searchList: ArrayList<DataLis
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = searchList[position]
         holder.category_name.text = item?.category_name
-        holder.jobCountTextView.text = "${item?.job_count} pekerjaan"
+
+        // Pastikan item tidak null sebelum mengakses properti job_count
+        val jobCount = item?.job_count ?: 0
+        holder.jobCountTextView.text = "$jobCount pekerjaan"
 
         // Logika untuk menentukan ikon berdasarkan nama kategori
         when (item?.category_name) {

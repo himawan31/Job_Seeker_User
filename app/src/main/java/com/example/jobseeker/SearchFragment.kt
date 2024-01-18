@@ -12,7 +12,10 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 
 
 class SearchFragment : Fragment() {
@@ -85,12 +88,31 @@ class SearchFragment : Fragment() {
                     val categoryName = categoryDocument.getString("category_name")
                     val dataListSearch = DataListSearch(category_name = categoryName ?: "", job_count = 0)
                     originalSearchList.add(dataListSearch)
-                }
 
-                adapter.updateData(originalSearchList)
+                    // Panggil metode untuk mengupdate jumlah pekerjaan
+                    updateJobCount(dataListSearch)
+                }
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting category documents: ", exception)
+            }
+    }
+
+    private fun updateJobCount(dataListSearch: DataListSearch) {
+        val firestore = FirebaseFirestore.getInstance()
+        val jobVacanciesRef = firestore.collection("job_vacancies")
+            .whereEqualTo("category", dataListSearch.category_name)
+
+        jobVacanciesRef.get()
+            .addOnSuccessListener { jobVacancyDocuments ->
+                // Update job_count pada dataListSearch
+                dataListSearch.job_count = jobVacancyDocuments.size()
+
+                // Setelah jumlah pekerjaan diupdate, perbarui adapter
+                adapter.updateData(originalSearchList)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error getting job vacancy documents: ", exception)
             }
     }
 }

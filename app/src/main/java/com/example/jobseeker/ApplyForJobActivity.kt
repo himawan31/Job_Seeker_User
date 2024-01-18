@@ -1,18 +1,13 @@
 package com.example.jobseeker
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.example.jobseeker.databinding.ActivityApplyForJobBinding
 import com.google.firebase.auth.FirebaseAuth

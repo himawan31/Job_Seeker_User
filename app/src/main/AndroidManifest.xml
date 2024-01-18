@@ -20,9 +20,6 @@
         android:theme="@style/Theme.JobSeeker"
         tools:targetApi="31">
         <activity
-            android:name=".PdfViewerActivity"
-            android:exported="false" />
-        <activity
             android:name=".ApplyJobSuccessfully"
             android:exported="false" />
         <activity
